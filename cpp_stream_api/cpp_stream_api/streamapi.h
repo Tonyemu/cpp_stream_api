@@ -2,6 +2,10 @@
 #define STREAMAPI_H
 #include <vector>
 #include <map>
+#include <stdarg.h>
+#include <ostream>
+#include <iostream>
+
 template<class T>
 std::vector<T> drop(const std::vector<T>& arr, size_t pre)
 {
@@ -59,6 +63,24 @@ std::map<K, V> filter(const std::map<K, V>& dic, bool(*oper)(const std::pair<K, 
 	{
 		const std::pair<K, V> kv = *iter;
 		if (oper(kv, other)) result[kv.first] = kv.second;
+	}
+	return result;
+}
+
+template<class T>
+T expand(const T& t)
+{
+	return t;
+}
+template<class T,class... Args>
+std::vector<T> array_of(const Args&... args)
+{
+	T arr[] = { expand(args)... };
+	std::vector<T> result;
+	size_t args_size = sizeof...(args);
+	for (size_t i = 0; i < args_size; ++i)
+	{
+		result.push_back(arr[i]);
 	}
 	return result;
 }
