@@ -2,9 +2,6 @@
 #define STREAMAPI_H
 #include <vector>
 #include <map>
-#include <stdarg.h>
-#include <ostream>
-#include <iostream>
 
 template<class T>
 std::vector<T> drop(const std::vector<T>& arr, size_t pre)
@@ -66,7 +63,7 @@ std::map<K, V> filter(const std::map<K, V>& dic, bool(*oper)(const std::pair<K, 
 	}
 	return result;
 }
-
+#ifdef STREAMAPI_CPP_11
 template<class T>
 T expand(const T& t)
 {
@@ -77,7 +74,7 @@ std::vector<T> array_of(const Args&... args)
 {
 	T arr[] = { expand(args)... };
 	std::vector<T> result;
-	size_t args_size = sizeof...(args);
+	const size_t args_size = sizeof...(args);
 	for (size_t i = 0; i < args_size; ++i)
 	{
 		result.push_back(arr[i]);
@@ -85,5 +82,17 @@ std::vector<T> array_of(const Args&... args)
 	return result;
 }
 
-
+template<class K,class V,class... Args>
+std::map<K, V> map_of(const Args&... args)
+{
+	std::map<K, V> result;
+	std::pair<K, V> pairs[] = { expand(args)... };
+	const size_t args_size = sizeof...(args);
+	for (size_t i = 0; i < args_size; ++i)
+	{
+		result.insert(pairs[i]);
+	}
+	return result;
+}
+#endif
 #endif // STREAMAPI_H
